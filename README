@@ -1,0 +1,52 @@
+follow the tutorial here http://www.brokenthorn.com/Resources/OSDevIndex.html but the tutorial is for windows user. This repository is for linux user.
+
+the character '#' at the beginning of each line stand for command that go into bash.  
+the character '//' stand for comment
+
+requirement : bochs (program used for emulate i386 machine) , nasm (used in this repository for compiling assembly code into machine code() )
+#sudo yum install bochs 
+#sudo yum install nasm
+or
+#sudo apt-get install bochs 
+#sudo apt-get install nasm
+
+(file) .bochsrc
+configuration file for bochs, in this commit it contain configuation for a floppy disk to emulate and point to floppy3.img file
+
+(file) bootloader.nasm 
+assembly code to put into the bootloader
+
+(file) bootloader.bin
+16 bit raw binary file that are compiled from bootloader.nasm.
+#nasm -f bin -o bootloader.bin bootloader.nasm
+
+(file) my/tool/create_write_a_file.c
+source code to copy n byte from a file to overwrite at a specific location of another file. see an example below for what this do 
+(example) {
+	(file1) contain text  (aaaaa)  (file2) contain text  (bbbbbbbbbb)
+	#./create_write_a_file --file1 file1 --file2 file2 --start1 1 --start2 1 --end1 3 --end2 3
+	(file1) contain text  (aaaaa)  (file2) contain text  (baaabbbbbb)
+	}
+
+(file) create_write_a_file
+execuble file
+#gcc -o create_write_a_file create_write_a_file.c
+
+(file) floppy3.img
+this file contain an image of an bootable floppy disk 
+here are the step to create this file and load binary into this file to make it bootable and have a fat12 file system 
+#dd -if=/dev/zero -of=floppy3.img bs=512 count=2048   //this command copy 1.44Mb contain 0 into floppy3.img
+#losetup /dev/loop0 floppy3.img     //load the image into loopback device. this mean you can use /dev/loop0 as a floppy device.
+#./create_write_a_file --file1 bootloader.bin --file2 floppy3.img --start1 0 --start2 0 --end1 511 --end2 511 	//copy 512 byte from bootloader.bin -> floppy3.img to format the floppy disk using fat12 file system
+#mount -t msdos -o loop,fat=12,umask=0,check=strict /dev/loop0 /mountpoint/  	// now you create a mount point for the floppy disk file system. if you write into this file system the floppy3.img will change accordingly as if you have a real floppy disk.
+
+boot the emulator bochs
+#bochs   // pick number 6 (begin to emulate, and you have your first os)
+
+also these command for umount and losetup
+#sudo umount /dev/loop0
+#sudo losetup -d /dev/loop0
+    
+ 
+
+
