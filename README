@@ -46,7 +46,23 @@ boot the emulator bochs
 also these command for umount and losetup
 #sudo umount /dev/loop0
 #sudo losetup -d /dev/loop0
-    
+
+<Second commit>
+
+<file Stage1.nasm> is the new bootloader
+
+<file Stage2.nasm>
+	the bootloader tranfer control to unlimited binary file
+
+<file Stage1.bin> 
+	#nasm -f bin -o Stage1.bin Stage1.nasm
+this file is copy to boot loader section of the floppy3.img	
+#./create_write_a_file --file1 Stage1.bin --file2 floppy3.img --start1 0 --start2 0 --end1 511 --end2 511 	//copy 512 byte from Stage2.bin -> floppy3.img to format the floppy disk using fat12 file system
+
+<file Stage2.bin>
+	#nasm -f bin -o Stage222.bin Stage2.nasm
+this file is located/copy in the floppy image
+
  
 
 

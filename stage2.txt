@@ -1,0 +1,31 @@
+
+;http://www.brokenthorn.com/Resources/OSDev6.html
+org 0x0  ;offset to 0
+bits 16  ; real mode
+jmp main ; 
+
+Print:
+	lodsb		; load next byte from ds:si to al
+	or	al,al	; if al = 0 , ZF flag will set
+	jz PrintDone	; jump if ZF is set. 
+	mov 	ah, 0eh	; print the character
+	int 	10h
+	jmp 	Print	;
+PrintDone:
+	ret 
+
+main:
+	cli		; clear interrupts
+	push 	cs	;
+	pop	ds	; ds = cs
+
+	mov si, Message	;
+	call 	Print	;
+	mov si, Msg	;
+	call 	Print	;
+
+	cli		; clear interrupts
+	hlt		; hault the system
+
+Message db "In Stage 2",13,10,0
+Msg db "Prarering to load os...",13,10,0
