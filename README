@@ -63,6 +63,7 @@ this file is copy to boot loader section of the floppy3.img
 	#nasm -f bin -o Stage222.bin Stage2.nasm
 this file is located/copy in the floppy image
 
- 
+<Third commit> 
+	follow Demo 3 : http://www.brokenthorn.com/Resources/OSDev10.html
 
 
